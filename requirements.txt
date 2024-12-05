@@ -1,0 +1,9 @@
+gradio
+pyffmpeg
+torch
+torchvision
+torchaudio
+transformers
+datasets[audio]
+ipython
+sentencepiece
