@@ -1,23 +1,24 @@
+""" Automatic Speech Recognition with 🤗 Transformers and OpenAI's Whisper """
 import torch
 from transformers import pipeline
-from transformers.pipelines.audio_utils import ffmpeg_read
 import gradio as gr
 
 MODEL_NAME = "openai/whisper-tiny"
 BATCH_SIZE = 8
 
-device = "cuda:0" if torch.cuda.is_available() else "cpu"
+DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 pipe = pipeline(
 	task="automatic-speech-recognition",
 	model=MODEL_NAME,
 	chunk_length_s=30,
-	device=device
+	device=DEVICE
 )
 
 
 # Copied from https://github.com/openai/whisper/blob/c09a7ae299c4c34c5839a76380ae407e7d785914/whisper/utils.py#L50
 def format_timestamp(seconds: float, always_include_hours: bool = False, decimal_marker: str = "."):
+	""" Format a timestamp in seconds to a human-readable format. """
 	if seconds is not None:
 		milliseconds = round(seconds * 1000.0)
 
@@ -37,6 +38,7 @@ def format_timestamp(seconds: float, always_include_hours: bool = False, decimal
 		return seconds
 
 def transcribe(file, task, return_timestamps):
+	""" Transcribe audio file. """
 	outputs = pipe(file, batch_size=BATCH_SIZE, generate_kwargs={"task": task}, return_timestamps=return_timestamps)
 	text = outputs["text"]
 	if return_timestamps:
