@@ -15,7 +15,7 @@ classifier = pipeline(
 	"audio-classification", model="MIT/ast-finetuned-speech-commands-v2", device=DEVICE
 )
 
-print(classifier.model.config.id2label[27]) # 30 = "Sheila", 27 = "Marvin"
+print(classifier.model.config.id2label[30]) # 30 = "Sheila", 27 = "Marvin"
 
 def launch_fn(
 	wake_word="sheila", # previously was "marvin"
