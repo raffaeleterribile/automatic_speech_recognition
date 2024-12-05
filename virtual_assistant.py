@@ -1,3 +1,4 @@
+""" Virtual Assistant Demo """
 import sys
 import torch
 import requests
@@ -61,13 +62,15 @@ def transcribe(chunk_length_s=5.0, stream_chunk_s=1.0):
 	)
 
 	print("Start speaking...")
+	text = ""
 	for item in transcriber(mic, generate_kwargs={"max_new_tokens": 128, "language": "it"}):
+		text += item["text"]
 		sys.stdout.write("\033[K")
 		print(item["text"], end="\r")
 		if not item["partial"][0]:
 			break
 
-	return item["text"]
+	return text
 
 def query(text, model_id="tiiuae/falcon-7b-instruct"):
 	"""  Queries a text-to-text model. """
@@ -76,8 +79,8 @@ def query(text, model_id="tiiuae/falcon-7b-instruct"):
 	payload = {"inputs": text}
 
 	print(f"Querying...: {text}")
-	response = requests.post(api_url, headers=headers, json=payload)
-	return response.json()[0]["generated_text"][len(text) + 1 :]
+	result = requests.post(api_url, headers=headers, json=payload, timeout=60)
+	return result.json()[0]["generated_text"][len(text) + 1 :]
 
 processor = SpeechT5Processor.from_pretrained("microsoft/speecht5_tts")
 
